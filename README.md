@@ -2,7 +2,7 @@
 ## Inventory System
 Design and develop a Secure Integrated Inventory Management System for small and medium-sized organizations. The system must automate inventory tracking, product management, transaction recording, and report generation while implementing strong security mechanisms to protect data from unauthorized access, data breaches, and manipulation.
 
-The system should include the following features:
+features:
 
 • User authentication and role-based access control  
 • Product and category management  
@@ -12,7 +12,7 @@ The system should include the following features:
 • Secure database management  
 • Inventory reporting and analytics  
 
-Security mechanisms must include:
+Security features:
 
 • Encrypted user authentication  
 • Role-based authorization (Admin, Inventory Manager, Staff)  
@@ -20,7 +20,7 @@ Security mechanisms must include:
 • Data validation and protection against unauthorized modification  
 • Secure database access  
 
-The system should follow a modular architecture and include the following modules:
+Modules:
 
 1. **User Management Module**
    - All Users — view, add, edit, delete system users
@@ -47,11 +47,3 @@ The system should follow a modular architecture and include the following module
 6. **Security and Audit Module**
    - Audit Logs — full activity log viewer with module and keyword filters, pagination (admin only)
 
-The system should use:
-
-• Backend: PHP native - PDO  
-• Database: MySQL  
-• Frontend: HTML, CSS->bootstrap framework, JavaScript  
-• Architecture: Client-Server  
-
-Ensure the system supports secure data handling, inventory monitoring, and reliable reporting.
