@@ -3,7 +3,7 @@
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../includes/auth.php';
 startSecureSession();
-requireRole(['admin','manager']);
+requireRole(['admin','manager','inventory_officer']);
 
 $page   = max(1, intval($_GET['page'] ?? 1));
 $limit  = 20;

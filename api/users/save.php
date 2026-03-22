@@ -16,7 +16,7 @@ if (!$username || !$email || !filter_var($email, FILTER_VALIDATE_EMAIL)) {
     echo json_encode(['success' => false, 'message' => 'Valid username and email are required.']);
     exit;
 }
-if (!in_array($role, ['admin','manager','staff'])) {
+if (!in_array($role, ['admin','manager','inventory_officer','staff'])) {
     echo json_encode(['success' => false, 'message' => 'Invalid role.']);
     exit;
 }

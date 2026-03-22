@@ -27,7 +27,7 @@ $users = $pdo->query('SELECT id, username, email, role, is_active, created_at FR
                     <td><?= $i+1 ?></td>
                     <td><?= htmlspecialchars($u['username']) ?></td>
                     <td><?= htmlspecialchars($u['email']) ?></td>
-                    <td><span class="badge bg-<?= ['admin'=>'danger','manager'=>'warning text-dark','staff'=>'secondary'][$u['role']] ?>"><?= ucfirst($u['role']) ?></span></td>
+                    <td><span class="badge bg-<?= ['admin'=>'danger','manager'=>'warning text-dark','inventory_officer'=>'info text-dark','staff'=>'secondary'][$u['role']] ?? 'secondary' ?>"><?= $u['role'] === 'inventory_officer' ? 'Inv. Officer' : ucfirst($u['role']) ?></span></td>
                     <td><span class="badge <?= $u['is_active'] ? 'bg-success' : 'bg-secondary' ?>"><?= $u['is_active'] ? 'Active' : 'Inactive' ?></span></td>
                     <td><?= date('M d, Y', strtotime($u['created_at'])) ?></td>
                     <td>
@@ -71,6 +71,7 @@ $users = $pdo->query('SELECT id, username, email, role, is_active, created_at FR
                         <label class="form-label">Role</label>
                         <select name="role" id="uRole" class="form-select">
                             <option value="staff">Staff</option>
+                            <option value="inventory_officer">Inventory Officer</option>
                             <option value="manager">Manager</option>
                             <option value="admin">Admin</option>
                         </select>

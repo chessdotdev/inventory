@@ -11,7 +11,7 @@ function isActive(string $href, string $current): bool {
     return rtrim($current, '/') === rtrim('/inventory_system/' . ltrim($href, '/'), '/');
 }
 
-$roleLabel = ['admin' => 'Admin', 'manager' => 'Manager', 'staff' => 'Staff'][$user['role']] ?? 'User';
+$roleLabel = ['admin' => 'Admin', 'manager' => 'Manager', 'inventory_officer' => 'Inventory Officer', 'staff' => 'Staff'][$user['role']] ?? 'User';
 $initial   = strtoupper(substr($user['username'], 0, 1));
 ?>
 <!DOCTYPE html>
@@ -58,7 +58,7 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                 </li>
 
                 <!-- ── CATALOG ── -->
-                <?php if (in_array($user['role'], ['admin','manager'])): ?>
+                <?php if (in_array($user['role'], ['admin','manager','inventory_officer','staff'])): ?>
                 <li class="nav-section-label">Catalog</li>
 
                 <?php $prodOpen = inModule('products', $currentPath) || inModule('categories', $currentPath); ?>
@@ -75,17 +75,20 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                                 All Products
                             </a>
                         </li>
+                        <?php if (in_array($user['role'], ['admin','manager','inventory_officer'])): ?>
                         <li>
                             <a href="/inventory_system/modules/categories/index.php"
                                class="<?= isActive('modules/categories/index.php', $currentPath) ? 'active' : '' ?>">
                                 Categories
                             </a>
                         </li>
+                        <?php endif; ?>
                     </ul>
                 </li>
                 <?php endif; ?>
 
                 <!-- ── STOCK ── -->
+                <?php if (in_array($user['role'], ['admin','manager','inventory_officer'])): ?>
                 <li class="nav-section-label">Stock</li>
 
                 <?php $invOpen = inModule('inventory', $currentPath); ?>
@@ -102,7 +105,7 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                                 Stock Levels
                             </a>
                         </li>
-                        <?php if (in_array($user['role'], ['admin','manager'])): ?>
+                        <?php if (in_array($user['role'], ['admin','manager','inventory_officer'])): ?>
                         <li>
                             <a href="/inventory_system/modules/inventory/adjust.php"
                                class="<?= isActive('modules/inventory/adjust.php', $currentPath) ? 'active' : '' ?>">
@@ -113,6 +116,8 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                     </ul>
                 </li>
 
+                <?php endif; ?>
+                <?php if (in_array($user['role'], ['admin','manager','inventory_officer','staff'])): ?>
                 <?php $txOpen = inModule('transactions', $currentPath); ?>
                 <li class="has-submenu <?= $txOpen ? 'open' : '' ?>">
                     <a href="#" class="nav-link nav-parent <?= $txOpen ? 'active' : '' ?>">
@@ -135,8 +140,10 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                         </li>
                     </ul>
                 </li>
+                <?php endif; ?>
 
                 <!-- ── ANALYTICS ── -->
+                <?php if (in_array($user['role'], ['admin','manager','inventory_officer'])): ?>
                 <li class="nav-section-label">Analytics</li>
 
                 <?php $repOpen = inModule('reports', $currentPath); ?>
@@ -167,6 +174,8 @@ $initial   = strtoupper(substr($user['username'], 0, 1));
                         </li>
                     </ul>
                 </li>
+
+                <?php endif; ?>
 
                 <!-- ── ADMIN ── -->
                 <?php if ($user['role'] === 'admin'): ?>

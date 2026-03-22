@@ -1,8 +1,11 @@
 <?php
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../includes/auth.php';
+startSecureSession();
+requireRole(['admin','manager','inventory_officer','staff']);
+
 $pageTitle = 'Products';
 $pageIcon  = 'box';
-require_once __DIR__ . '/../../includes/layout_top.php';
-requireRole(['admin','manager']);
 
 $products = $pdo->query(
     'SELECT p.*, c.name AS category_name, COALESCE(i.quantity,0) AS stock
@@ -14,6 +17,9 @@ $products = $pdo->query(
 )->fetchAll();
 
 $categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetchAll();
+
+$canManage = in_array($user['role'] ?? $_SESSION['role'], ['admin','manager','inventory_officer']);
+require_once __DIR__ . '/../../includes/layout_top.php';
 ?>
 
 <div class="d-flex justify-content-between align-items-center mb-3">
@@ -46,8 +52,10 @@ $categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetc
                     <td><?= $p['reorder_level'] ?></td>
                     <td>
                         <a href="/inventory_system/modules/products/view.php?id=<?= $p['id'] ?>" class="btn btn-sm btn-outline-secondary"><i class="fas fa-eye"></i></a>
+                        <?php if ($canManage): ?>
                         <button class="btn btn-sm btn-outline-primary" onclick="editProd(<?= htmlspecialchars(json_encode($p)) ?>)"><i class="fas fa-edit"></i></button>
                         <button class="btn btn-sm btn-outline-danger" onclick="deleteProd(<?= $p['id'] ?>, '<?= htmlspecialchars($p['name']) ?>')"><i class="fas fa-trash"></i></button>
+                        <?php endif; ?>
                     </td>
                 </tr>
                 <?php endforeach; ?>
@@ -68,15 +76,15 @@ $categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetc
             <form id="prodForm">
                 <div class="modal-body">
                     <input type="hidden" id="prodId" name="id">
+
                     <div class="row g-3">
-                        <div class="col-md-6">
-                            <label class="form-label">SKU</label>
-                            <input type="text" name="sku" id="pSku" class="form-control" required>
-                        </div>
+
+                        <!-- Row 1 -->
                         <div class="col-md-6">
                             <label class="form-label">Product Name</label>
                             <input type="text" name="name" id="pName" class="form-control" required>
                         </div>
+
                         <div class="col-md-6">
                             <label class="form-label">Category</label>
                             <select name="category_id" id="pCat" class="form-select">
@@ -86,24 +94,33 @@ $categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetc
                                 <?php endforeach; ?>
                             </select>
                         </div>
-                        <div class="col-md-3">
+
+                        <!-- Row 2 -->
+                        <div class="col-md-6">
                             <label class="form-label">Unit</label>
                             <input type="text" name="unit" id="pUnit" class="form-control" value="pcs">
                         </div>
-                        <div class="col-md-3">
+
+                        <div class="col-md-6">
                             <label class="form-label">Price (₱)</label>
                             <input type="number" name="price" id="pPrice" class="form-control" step="0.01" min="0" required>
                         </div>
+
+                        <!-- Row 3 -->
                         <div class="col-md-6">
                             <label class="form-label">Reorder Level</label>
                             <input type="number" name="reorder_level" id="pReorder" class="form-control" value="10" min="0">
                         </div>
-                        <div class="col-12">
-                            <label class="form-label">Description</label>
-                            <textarea name="description" id="pDesc" class="form-control" rows="2"></textarea>
-                        </div>
+
+
                     </div>
+                    
+                        <div class="col-md-12">
+                            <label class="form-label">Description</label>
+                            <textarea name="description" id="pDesc" class="form-control" rows="3"></textarea>
+                        </div>
                 </div>
+
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancel</button>
                     <button type="submit" class="btn btn-primary">Save Product</button>
@@ -117,11 +134,19 @@ $categories = $pdo->query('SELECT id, name FROM categories ORDER BY name')->fetc
 $extraScripts = <<<JS
 <script>
 const modal = new bootstrap.Modal(document.getElementById('prodModal'));
+
+async function fetchSku() {
+    const res  = await fetch('/inventory_system/api/products/generate_sku.php');
+    const data = await res.json();
+    document.getElementById('pSku').value = data.sku;
+}
+
 document.getElementById('prodModal').addEventListener('show.bs.modal', e => {
     if (!e.relatedTarget) return;
     document.getElementById('prodForm').reset();
     document.getElementById('prodId').value = '';
     document.getElementById('prodModalTitle').textContent = 'Add Product';
+    fetchSku();
 });
 function editProd(p) {
     document.getElementById('prodId').value = p.id;

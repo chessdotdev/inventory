@@ -2,7 +2,7 @@
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../includes/auth.php';
 startSecureSession();
-requireLogin();
+requireRole(['admin','manager','inventory_officer']);
 
 $search = trim($_GET['search'] ?? '');
 $filter = $_GET['filter'] ?? 'all';

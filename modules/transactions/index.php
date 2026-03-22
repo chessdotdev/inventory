@@ -1,7 +1,11 @@
 <?php
+require_once __DIR__ . '/../../config.php';
+require_once __DIR__ . '/../../includes/auth.php';
+startSecureSession();
+requireRole(['admin','manager','inventory_officer','staff']);
+
 $pageTitle = 'Transactions';
 $pageIcon  = 'exchange-alt';
-require_once __DIR__ . '/../../includes/layout_top.php';
 
 $type  = $_GET['type'] ?? 'all';
 $from  = $_GET['from'] ?? '';
@@ -35,6 +39,8 @@ $transactions = $stmt->fetchAll();
 
 $badges = ['stock_in'=>'bg-success','stock_out'=>'bg-danger','adjustment'=>'bg-info'];
 $labels = ['stock_in'=>'Stock In','stock_out'=>'Stock Out','adjustment'=>'Adjustment'];
+
+require_once __DIR__ . '/../../includes/layout_top.php';
 ?>
 
 <form method="GET" class="row g-2 mb-3">

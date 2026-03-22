@@ -3,7 +3,7 @@ header('Content-Type: application/json');
 require_once __DIR__ . '/../../config.php';
 require_once __DIR__ . '/../../includes/auth.php';
 startSecureSession();
-requireLogin();
+requireRole(['admin','manager','inventory_officer']);
 
 $product_id = intval($_POST['product_id'] ?? 0);
 $type       = $_POST['type'] ?? '';
