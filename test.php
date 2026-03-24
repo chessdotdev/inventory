@@ -6,4 +6,4 @@ function generateProductId($productID) {
 }
 
 echo generateProductId($productID);
-//test - akali
+
